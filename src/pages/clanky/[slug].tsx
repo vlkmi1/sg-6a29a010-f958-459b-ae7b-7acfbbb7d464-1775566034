@@ -66,12 +66,24 @@ export default function ArticlePage() {
     return null;
   }
 
+  // Generate SEO-friendly tags from article content
+  const extractTags = (content: string): string[] => {
+    const commonWords = ['odvlhčování', 'plíseň', 'vlhkost', 'dům', 'byt', 'sklep'];
+    return commonWords.slice(0, 5);
+  };
+
   return (
     <>
       <SEO
-        title={article.title}
-        description={article.excerpt || undefined}
+        title={`${article.title} | Bydlení bez plísně`}
+        description={article.excerpt || `Přečtěte si článek o ${article.title.toLowerCase()}. Kompletní průvodce odvlhčováním a prevencí plísní.`}
         image={article.featured_image || undefined}
+        url={`/clanky/${article.slug}`}
+        type="article"
+        publishedTime={article.created_at}
+        modifiedTime={article.updated_at}
+        author="Bydlení bez plísně"
+        tags={extractTags(article.content)}
       />
       
       <div className="min-h-screen flex flex-col bg-background">
@@ -96,7 +108,9 @@ export default function ArticlePage() {
                   <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
-                      <time>{formatDate(article.created_at)}</time>
+                      <time dateTime={article.created_at}>
+                        {formatDate(article.created_at)}
+                      </time>
                     </div>
                     <div className="flex items-center gap-2">
                       <Eye className="w-4 h-4" />
