@@ -1,96 +1,118 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ArrowRight, Calendar } from "lucide-react";
+import { articlesService } from "@/services/articlesService";
+import type { Database } from "@/integrations/supabase/types";
 
-// Mock data - bude nahrazeno Supabase daty
-const mockArticles = [
-  {
-    id: 1,
-    title: "Jak vybrat správný odvlhčovač pro váš domov",
-    excerpt: "Kompletní průvodce výběrem odvlhčovače podle velikosti místnosti a míry vlhkosti.",
-    category: "Průvodce",
-    date: "2026-04-05",
-    image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80",
-  },
-  {
-    id: 2,
-    title: "5 tipů jak předejít plísním v bytě",
-    excerpt: "Jednoduché a účinné metody prevence vzniku plísní ve vašem domově.",
-    category: "Prevence",
-    date: "2026-04-03",
-    image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80",
-  },
-  {
-    id: 3,
-    title: "Nejlepší odvlhčovače roku 2026",
-    excerpt: "Recenze a srovnání top odvlhčovačů na trhu. Najděte ten nejlepší pro vaše potřeby.",
-    category: "Recenze",
-    date: "2026-04-01",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
-  },
-];
+type Article = Database["public"]["Tables"]["articles"]["Row"];
 
 export function ArticlesPreview() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadArticles();
+  }, []);
+
+  const loadArticles = async () => {
+    try {
+      const data = await articlesService.getArticles(true);
+      setArticles(data.slice(0, 3));
+    } catch (error) {
+      console.error("Error loading articles:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("cs-CZ", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+  };
+
   return (
-    <section className="bg-muted/30 section-padding">
-      <div className="container-custom">
-        <div className="text-center mb-12 space-y-4">
-          <h2 className="font-heading font-bold text-3xl sm:text-4xl">
+    <section className="section-padding bg-muted/30">
+      <div className="container">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
             Nejnovější články
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Objevte odborné rady, tipy a recenze produktů pro zdravé bydlení
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Praktické rady a tipy pro zdravé bydlení bez vlhkosti a plísní
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {mockArticles.map((article) => (
-            <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow group">
-              <div className="aspect-video overflow-hidden bg-muted">
-                <img
-                  src={article.image}
-                  alt={article.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              
-              <CardHeader className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">{article.category}</Badge>
-                  <span className="text-sm text-muted-foreground flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {new Date(article.date).toLocaleDateString("cs-CZ")}
-                  </span>
-                </div>
-                <h3 className="font-heading font-semibold text-xl leading-tight">
-                  {article.title}
-                </h3>
-              </CardHeader>
-              
-              <CardContent>
-                <p className="text-muted-foreground line-clamp-2">
-                  {article.excerpt}
-                </p>
-              </CardContent>
-              
-              <CardFooter>
-                <Link href={`/clanek/${article.id}`} className="w-full">
-                  <Button variant="ghost" className="w-full group/btn">
-                    Číst více
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+        {loading ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="animate-pulse">
+                <CardHeader>
+                  <div className="aspect-video bg-muted rounded-lg mb-4" />
+                  <div className="h-6 bg-muted rounded w-3/4 mb-2" />
+                  <div className="h-4 bg-muted rounded w-full" />
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        ) : articles.length === 0 ? (
+          <Card>
+            <CardContent className="py-16 text-center">
+              <p className="text-muted-foreground">
+                Zatím nejsou k dispozici žádné články
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {articles.map((article) => (
+              <Card key={article.id} className="group hover:shadow-lg transition-all hover:border-primary/50">
+                <CardHeader>
+                  {article.image_url && (
+                    <div className="aspect-video bg-muted rounded-lg overflow-hidden mb-4">
+                      <img
+                        src={article.image_url}
+                        alt={article.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                    <Calendar className="w-4 h-4" />
+                    <time>{formatDate(article.created_at)}</time>
+                  </div>
+                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                    {article.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground line-clamp-3">
+                    {article.excerpt}
+                  </p>
+                </CardContent>
+                <CardFooter>
+                  <Link href={`/clanky/${article.slug}`} className="w-full">
+                    <Button variant="ghost" className="w-full gap-2 group">
+                      Číst více
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
 
-        <div className="text-center">
+        <div className="text-center mt-12">
           <Link href="/clanky">
-            <Button size="lg" variant="outline" className="font-semibold">
+            <Button size="lg" variant="outline" className="gap-2">
               Zobrazit všechny články
+              <ArrowRight className="w-5 h-5" />
             </Button>
           </Link>
         </div>
