@@ -6,11 +6,12 @@ import { useState } from "react";
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const navLinks = [
-    { href: "/", label: "Domů" },
-    { href: "/clanky", label: "Články" },
-    { href: "/produkty", label: "Produkty" },
-    { href: "/kontakt", label: "Kontakt" },
+  const navItems = [
+    { label: "Úvod", href: "/" },
+    { label: "Články", href: "/clanky" },
+    { label: "Produkty", href: "/produkty" },
+    { label: "O nás", href: "/#o-nas" },
+    { label: "Kontakt", href: "/#kontakt" }
   ];
 
   return (
@@ -25,10 +26,10 @@ export function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
+            {navItems.map((item) => (
+              <Link key={item.href} href={item.href}>
                 <Button variant="ghost" className="font-medium">
-                  {link.label}
+                  {item.label}
                 </Button>
               </Link>
             ))}
@@ -50,14 +51,14 @@ export function Navigation() {
         {isOpen && (
           <div className="md:hidden py-4 animate-fade-in">
             <div className="flex flex-col gap-2">
-              {navLinks.map((link) => (
-                <Link key={link.href} href={link.href}>
+              {navItems.map((item) => (
+                <Link key={item.href} href={item.href}>
                   <Button
                     variant="ghost"
                     className="w-full justify-start font-medium"
                     onClick={() => setIsOpen(false)}
                   >
-                    {link.label}
+                    {item.label}
                   </Button>
                 </Link>
               ))}
