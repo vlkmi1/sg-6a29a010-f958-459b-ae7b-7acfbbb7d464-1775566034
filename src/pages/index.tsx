@@ -1,12 +1,28 @@
-import React from 'react'
+import { SEO } from "@/components/SEO";
+import { Navigation } from "@/components/Navigation";
+import { Hero } from "@/components/Hero";
+import { ArticlesPreview } from "@/components/ArticlesPreview";
+import { Footer } from "@/components/Footer";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <main className="min-h-screen bg-background flex items-center justify-center">
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold text-foreground">Hello World</h1>
-        <p className="text-lg text-muted-foreground">This is going to be your softgen app, start by describing your project.</p>
+    <>
+      <SEO
+        title="Bydlení bez plísně - Průvodce odvlhčováním a zdravým bydlením"
+        description="Objevte účinná řešení pro odvlhčení domova. Odborné rady, recenze odvlhčovačů a praktické návody pro bydlení bez vlhkosti a plísní."
+        url="https://bydlenibezplisne.cz"
+      />
+      
+      <div className="min-h-screen flex flex-col">
+        <Navigation />
+        
+        <main className="flex-1">
+          <Hero />
+          <ArticlesPreview />
+        </main>
+        
+        <Footer />
       </div>
-    </main>
-  )
+    </>
+  );
 }
