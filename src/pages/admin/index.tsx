@@ -131,7 +131,7 @@ export default function AdminPage() {
                             <div className="flex gap-4 mt-4 text-sm text-muted-foreground">
                               <span>Vytvořeno: {formatDate(article.created_at)}</span>
                               {article.published && (
-                                <span>• {article.views || 0} zobrazení</span>
+                                <span>• {article.view_count || 0} zobrazení</span>
                               )}
                             </div>
                           </div>

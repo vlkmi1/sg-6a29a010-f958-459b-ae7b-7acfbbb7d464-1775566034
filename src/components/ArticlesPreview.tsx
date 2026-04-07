@@ -73,10 +73,10 @@ export function ArticlesPreview() {
             {articles.map((article) => (
               <Card key={article.id} className="group hover:shadow-lg transition-all hover:border-primary/50">
                 <CardHeader>
-                  {article.image_url && (
+                  {article.featured_image && (
                     <div className="aspect-video bg-muted rounded-lg overflow-hidden mb-4">
                       <img
-                        src={article.image_url}
+                        src={article.featured_image}
                         alt={article.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />

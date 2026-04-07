@@ -61,10 +61,13 @@ export const articlesService = {
     return data;
   },
 
-  async createArticle(article: ArticleInsert): Promise<Article> {
+  async createArticle(article: Partial<ArticleInsert>): Promise<Article> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Uživatel není přihlášen");
+
     const { data, error } = await supabase
       .from("articles")
-      .insert(article)
+      .insert({ ...article, author_id: user.id } as ArticleInsert)
       .select()
       .single();
     

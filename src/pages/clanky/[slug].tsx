@@ -30,7 +30,7 @@ export default function ArticlePage() {
         setArticle(data);
         // Increment view count
         await articlesService.updateArticle(data.id, {
-          views: (data.views || 0) + 1
+          view_count: (data.view_count || 0) + 1
         });
       } else {
         router.push("/404");
@@ -70,8 +70,8 @@ export default function ArticlePage() {
     <>
       <SEO
         title={article.title}
-        description={article.excerpt}
-        image={article.image_url || undefined}
+        description={article.excerpt || undefined}
+        image={article.featured_image || undefined}
       />
       
       <div className="min-h-screen flex flex-col bg-background">
@@ -100,7 +100,7 @@ export default function ArticlePage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Eye className="w-4 h-4" />
-                      <span>{article.views || 0} zobrazení</span>
+                      <span>{article.view_count || 0} zobrazení</span>
                     </div>
                   </div>
                   
@@ -113,12 +113,12 @@ export default function ArticlePage() {
               </div>
             </header>
 
-            {article.image_url && (
+            {article.featured_image && (
               <div className="container py-8">
                 <div className="max-w-4xl mx-auto">
                   <div className="aspect-video rounded-xl overflow-hidden bg-muted">
                     <img
-                      src={article.image_url}
+                      src={article.featured_image}
                       alt={article.title}
                       className="w-full h-full object-cover"
                     />

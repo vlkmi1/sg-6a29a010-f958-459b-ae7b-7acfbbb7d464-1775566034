@@ -35,7 +35,7 @@ export default function ArticleEditPage() {
     excerpt: "",
     content: "",
     category_id: "",
-    image_url: "",
+    featured_image: "",
     published: false
   });
 
@@ -64,11 +64,11 @@ export default function ArticleEditPage() {
         setFormData({
           title: article.title,
           slug: article.slug,
-          excerpt: article.excerpt,
+          excerpt: article.excerpt || "",
           content: article.content,
           category_id: article.category_id || "",
-          image_url: article.image_url || "",
-          published: article.published
+          featured_image: article.featured_image || "",
+          published: article.published || false
         });
       }
     } catch (error) {
@@ -107,8 +107,8 @@ export default function ArticleEditPage() {
         await articlesService.createArticle({
           ...formData,
           category_id: formData.category_id || null,
-          image_url: formData.image_url || null
-        });
+          featured_image: formData.featured_image || null
+        } as any);
         toast({
           title: "Úspěch",
           description: "Článek byl vytvořen"
@@ -117,7 +117,7 @@ export default function ArticleEditPage() {
         await articlesService.updateArticle(id as string, {
           ...formData,
           category_id: formData.category_id || null,
-          image_url: formData.image_url || null
+          featured_image: formData.featured_image || null
         });
         toast({
           title: "Úspěch",
@@ -242,8 +242,8 @@ export default function ArticleEditPage() {
                         <Label htmlFor="image">URL obrázku</Label>
                         <Input
                           id="image"
-                          value={formData.image_url}
-                          onChange={(e) => setFormData(prev => ({ ...prev, image_url: e.target.value }))}
+                          value={formData.featured_image}
+                          onChange={(e) => setFormData(prev => ({ ...prev, featured_image: e.target.value }))}
                           placeholder="https://..."
                         />
                       </div>
