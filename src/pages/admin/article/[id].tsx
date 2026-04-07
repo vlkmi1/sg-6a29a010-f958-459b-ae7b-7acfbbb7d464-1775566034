@@ -12,6 +12,8 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Save } from "lucide-react";
 import { articlesService } from "@/services/articlesService";
+import { authService } from "@/services/authService";
+import { RichTextEditor } from "@/components/RichTextEditor";
 import type { Database } from "@/integrations/supabase/types";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
@@ -27,6 +29,7 @@ export default function ArticleEditPage() {
 
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [categories, setCategories] = useState<Category[]>([]);
   
   const [formData, setFormData] = useState({
@@ -40,11 +43,32 @@ export default function ArticleEditPage() {
   });
 
   useEffect(() => {
-    loadCategories();
-    if (!isNew && id) {
-      loadArticle(id as string);
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    if (!checkingAuth) {
+      loadCategories();
+      if (!isNew && id) {
+        loadArticle(id as string);
+      }
     }
-  }, [id, isNew]);
+  }, [id, isNew, checkingAuth]);
+
+  const checkAuth = async () => {
+    try {
+      const user = await authService.getCurrentUser();
+      if (!user) {
+        router.push("/admin/login");
+        return;
+      }
+    } catch (error) {
+      console.error("Auth check error:", error);
+      router.push("/admin/login");
+    } finally {
+      setCheckingAuth(false);
+    }
+  };
 
   const loadCategories = async () => {
     try {
@@ -137,7 +161,7 @@ export default function ArticleEditPage() {
     }
   };
 
-  if (loading) {
+  if (checkingAuth || loading) {
     return (
       <>
         <SEO title="Načítání..." />
@@ -270,15 +294,13 @@ export default function ArticleEditPage() {
                     <CardTitle>Obsah článku *</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <Textarea
+                    <RichTextEditor
                       value={formData.content}
-                      onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                      placeholder="Napište obsah článku..."
-                      rows={20}
-                      className="font-mono text-sm"
+                      onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
+                      placeholder="Začněte psát svůj článek..."
                     />
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Podporuje základní HTML formátování
+                    <p className="text-sm text-muted-foreground mt-4">
+                      Použijte editor pro formátování textu. Podporuje nadpisy, odkazy, seznamy a další.
                     </p>
                   </CardContent>
                 </Card>

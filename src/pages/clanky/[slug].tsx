@@ -18,8 +18,8 @@ export default function ArticlePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (slug && typeof slug === "string") {
-      loadArticle(slug);
+    if (slug) {
+      loadArticle(slug as string);
     }
   }, [slug]);
 
@@ -28,7 +28,6 @@ export default function ArticlePage() {
       const data = await articlesService.getArticleBySlug(articleSlug);
       if (data) {
         setArticle(data);
-        // Increment view count
         await articlesService.updateArticle(data.id, {
           view_count: (data.view_count || 0) + 1
         });
@@ -51,39 +50,26 @@ export default function ArticlePage() {
     });
   };
 
-  if (loading) {
+  if (loading || !article) {
     return (
       <>
         <SEO title="Načítání..." />
         <div className="min-h-screen flex items-center justify-center">
-          <p className="text-muted-foreground">Načítání článku...</p>
+          <p className="text-muted-foreground">Načítání...</p>
         </div>
       </>
     );
   }
 
-  if (!article) {
-    return null;
-  }
-
-  // Generate SEO-friendly tags from article content
-  const extractTags = (content: string): string[] => {
-    const commonWords = ['odvlhčování', 'plíseň', 'vlhkost', 'dům', 'byt', 'sklep'];
-    return commonWords.slice(0, 5);
-  };
-
   return (
     <>
       <SEO
-        title={`${article.title} | Bydlení bez plísně`}
-        description={article.excerpt || `Přečtěte si článek o ${article.title.toLowerCase()}. Kompletní průvodce odvlhčováním a prevencí plísní.`}
+        title={article.title}
+        description={article.excerpt || undefined}
         image={article.featured_image || undefined}
-        url={`/clanky/${article.slug}`}
         type="article"
         publishedTime={article.created_at}
         modifiedTime={article.updated_at}
-        author="Bydlení bez plísně"
-        tags={extractTags(article.content)}
       />
       
       <div className="min-h-screen flex flex-col bg-background">
@@ -91,38 +77,27 @@ export default function ArticlePage() {
         
         <main className="flex-1">
           <article>
-            <header className="section-padding bg-gradient-to-b from-primary/5 to-background">
+            <header className="bg-gradient-to-br from-primary/5 via-background to-accent/5 py-16">
               <div className="container">
                 <div className="max-w-4xl mx-auto">
-                  <Link href="/clanky">
-                    <Button variant="ghost" size="sm" className="mb-6 gap-2">
-                      <ArrowLeft className="w-4 h-4" />
-                      Zpět na články
-                    </Button>
-                  </Link>
-                  
-                  <h1 className="text-4xl sm:text-5xl font-bold mb-6">
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
                     {article.title}
                   </h1>
-                  
+                  {article.excerpt && (
+                    <p className="text-xl text-muted-foreground mb-6">
+                      {article.excerpt}
+                    </p>
+                  )}
                   <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
-                      <time dateTime={article.created_at}>
-                        {formatDate(article.created_at)}
-                      </time>
+                      <time>{formatDate(article.created_at)}</time>
                     </div>
                     <div className="flex items-center gap-2">
                       <Eye className="w-4 h-4" />
                       <span>{article.view_count || 0} zobrazení</span>
                     </div>
                   </div>
-                  
-                  {article.excerpt && (
-                    <p className="text-lg text-muted-foreground mt-6">
-                      {article.excerpt}
-                    </p>
-                  )}
                 </div>
               </div>
             </header>
@@ -143,33 +118,15 @@ export default function ArticlePage() {
 
             <section className="section-padding">
               <div className="container">
-                <div className="max-w-3xl mx-auto prose prose-lg">
+                <div className="max-w-3xl mx-auto">
                   <div 
+                    className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:font-heading prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
                     dangerouslySetInnerHTML={{ __html: article.content }}
-                    className="text-foreground leading-relaxed"
                   />
                 </div>
               </div>
             </section>
           </article>
-
-          <section className="section-padding bg-muted/30">
-            <div className="container">
-              <div className="max-w-3xl mx-auto text-center">
-                <h2 className="text-2xl font-bold mb-4">
-                  Máte dotazy k odvlhčování?
-                </h2>
-                <p className="text-muted-foreground mb-6">
-                  Rádi vám poradíme s výběrem správného řešení pro váš domov
-                </p>
-                <Link href="/#kontakt">
-                  <Button size="lg">
-                    Kontaktujte nás
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </section>
         </main>
         
         <Footer />

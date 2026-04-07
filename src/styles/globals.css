@@ -1,41 +1,76 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Work+Sans:wght@400;500;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Work+Sans:wght@400;500;600&display=swap');
 
 @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;
+
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
+
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-    --primary: 207 89% 61%;
+
+    --primary: 199 89% 48%;
     --primary-foreground: 0 0% 100%;
+
     --secondary: 210 40% 96%;
     --secondary-foreground: 222 47% 11%;
+
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
-    --accent: 207 89% 61%;
-    --accent-foreground: 0 0% 100%;
+
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
+
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 207 89% 61%;
+    --ring: 199 89% 48%;
+
     --radius: 0.75rem;
-    
-    --success: 142 71% 45%;
+
+    --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
+
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
-    
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 199 89% 48%;
   }
 }
 
@@ -43,27 +78,80 @@
   * {
     @apply border-border;
   }
-  
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-background text-foreground;
+    font-family: 'Work Sans', system-ui, -apple-system, sans-serif;
   }
-  
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-  
-  .container-custom {
-    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
   
   .section-padding {
     @apply py-16 sm:py-20 lg:py-24;
   }
+}
+
+/* Rich Text Editor Styles */
+.rich-text-editor {
+  @apply rounded-lg border border-input overflow-hidden;
+}
+
+.rich-text-editor .ql-toolbar {
+  @apply bg-muted/50 border-b border-input;
+}
+
+.rich-text-editor .ql-container {
+  @apply bg-background;
+  font-family: 'Work Sans', system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+}
+
+.rich-text-editor .ql-editor {
+  @apply min-h-[400px] text-foreground;
+}
+
+.rich-text-editor .ql-editor.ql-blank::before {
+  @apply text-muted-foreground;
+}
+
+.rich-text-editor .ql-editor h1,
+.rich-text-editor .ql-editor h2,
+.rich-text-editor .ql-editor h3 {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  @apply font-bold mb-4 mt-6;
+}
+
+.rich-text-editor .ql-editor h1 {
+  @apply text-3xl;
+}
+
+.rich-text-editor .ql-editor h2 {
+  @apply text-2xl;
+}
+
+.rich-text-editor .ql-editor h3 {
+  @apply text-xl;
+}
+
+.rich-text-editor .ql-editor p {
+  @apply mb-4;
+}
+
+.rich-text-editor .ql-editor ul,
+.rich-text-editor .ql-editor ol {
+  @apply mb-4 pl-6;
+}
+
+.rich-text-editor .ql-editor blockquote {
+  @apply border-l-4 border-primary pl-4 italic my-4;
+}
+
+.rich-text-editor .ql-editor a {
+  @apply text-primary hover:underline;
 }

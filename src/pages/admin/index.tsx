@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { SEO } from "@/components/SEO";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, LogOut } from "lucide-react";
 import { articlesService } from "@/services/articlesService";
+import { authService } from "@/services/authService";
 import type { Database } from "@/integrations/supabase/types";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
@@ -14,13 +16,31 @@ import { useToast } from "@/hooks/use-toast";
 type Article = Database["public"]["Tables"]["articles"]["Row"];
 
 export default function AdminPage() {
+  const router = useRouter();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
-    loadArticles();
+    checkAuth();
   }, []);
+
+  const checkAuth = async () => {
+    try {
+      const user = await authService.getCurrentUser();
+      if (!user) {
+        router.push("/admin/login");
+        return;
+      }
+      loadArticles();
+    } catch (error) {
+      console.error("Auth check error:", error);
+      router.push("/admin/login");
+    } finally {
+      setCheckingAuth(false);
+    }
+  };
 
   const loadArticles = async () => {
     try {
@@ -58,6 +78,24 @@ export default function AdminPage() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await authService.signOut();
+      toast({
+        title: "Odhlášení",
+        description: "Byli jste úspěšně odhlášeni"
+      });
+      router.push("/admin/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({
+        title: "Chyba",
+        description: "Nepodařilo se odhlásit",
+        variant: "destructive"
+      });
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("cs-CZ", {
       day: "numeric",
@@ -65,6 +103,17 @@ export default function AdminPage() {
       year: "numeric"
     });
   };
+
+  if (checkingAuth) {
+    return (
+      <>
+        <SEO title="Načítání..." />
+        <div className="min-h-screen flex items-center justify-center">
+          <p className="text-muted-foreground">Ověřování přístupu...</p>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -84,12 +133,18 @@ export default function AdminPage() {
                   <h1 className="text-4xl font-bold mb-2">Správa článků</h1>
                   <p className="text-muted-foreground">Vytvářejte a spravujte své články</p>
                 </div>
-                <Link href="/admin/article/new">
-                  <Button size="lg" className="gap-2">
-                    <Plus className="w-5 h-5" />
-                    Nový článek
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={handleLogout} className="gap-2">
+                    <LogOut className="w-4 h-4" />
+                    Odhlásit
                   </Button>
-                </Link>
+                  <Link href="/admin/article/new">
+                    <Button size="lg" className="gap-2">
+                      <Plus className="w-5 h-5" />
+                      Nový článek
+                    </Button>
+                  </Link>
+                </div>
               </div>
 
               {loading ? (
