@@ -37,7 +37,6 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
   return (
     <div className="rich-text-editor">
       <ReactQuill
-        ref={quillRef}
         theme="snow"
         value={value}
         onChange={onChange}
