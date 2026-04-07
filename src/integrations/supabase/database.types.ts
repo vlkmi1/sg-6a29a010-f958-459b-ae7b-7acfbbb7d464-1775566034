@@ -17,7 +17,7 @@ export type Database = {
     Tables: {
       articles: {
         Row: {
-          author_id: string
+          author_id: string | null
           category_id: string | null
           content: string
           created_at: string | null
@@ -31,7 +31,7 @@ export type Database = {
           view_count: number | null
         }
         Insert: {
-          author_id: string
+          author_id?: string | null
           category_id?: string | null
           content: string
           created_at?: string | null
@@ -45,7 +45,7 @@ export type Database = {
           view_count?: number | null
         }
         Update: {
-          author_id?: string
+          author_id?: string | null
           category_id?: string | null
           content?: string
           created_at?: string | null
