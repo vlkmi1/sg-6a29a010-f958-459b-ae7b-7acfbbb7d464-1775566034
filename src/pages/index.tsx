@@ -12,8 +12,8 @@ export default function Home() {
     <>
       <SEO
         title="Bydlení bez plísně - Řešení problémů s vlhkostí"
-        description="Profesionální poradenství a řešení pro odvlhčování domů, bytů a sklepů. Zbavte se plísní a vlhkosti efektivně."
-      />
+        description="Profesionální poradenství a řešení pro odvlhčování domů, bytů a sklepů. Zbavte se plísní a vlhkosti efektivně." />
+      
       
       <div className="min-h-screen flex flex-col bg-background">
         <Navigation />
@@ -54,8 +54,8 @@ export default function Home() {
                         <Phone className="w-6 h-6 text-primary" />
                       </div>
                       <h3 className="font-semibold mb-2">Telefon</h3>
-                      <p className="text-sm text-muted-foreground">
-                        +420 XXX XXX XXX
+                      <p className="text-sm text-muted-foreground">+420 723 300 141
+
                       </p>
                     </CardContent>
                   </Card>
@@ -66,8 +66,8 @@ export default function Home() {
                         <MapPin className="w-6 h-6 text-primary" />
                       </div>
                       <h3 className="font-semibold mb-2">Adresa</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Praha, Česká republika
+                      <p className="text-sm text-muted-foreground">Vodní 84, Kroměříž
+
                       </p>
                     </CardContent>
                   </Card>
@@ -87,6 +87,6 @@ export default function Home() {
         
         <Footer />
       </div>
-    </>
-  );
+    </>);
+
 }
