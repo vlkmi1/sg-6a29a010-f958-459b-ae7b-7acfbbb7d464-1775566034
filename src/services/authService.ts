@@ -94,6 +94,11 @@ export const authService = {
         return { user: null, error: { message: error.message, code: error.status?.toString() } };
       }
 
+      // Ensure user has a profile
+      if (data.user) {
+        await this.ensureProfile(data.user.id, data.user.email || "");
+      }
+
       const authUser = data.user ? {
         id: data.user.id,
         email: data.user.email || "",
@@ -107,6 +112,30 @@ export const authService = {
         user: null, 
         error: { message: "An unexpected error occurred during sign in" } 
       };
+    }
+  },
+
+  // Ensure user has a profile (create if doesn't exist)
+  async ensureProfile(userId: string, email: string): Promise<void> {
+    try {
+      const { data: existingProfile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("id", userId)
+        .single();
+
+      if (!existingProfile) {
+        console.log("Creating profile for user:", userId);
+        const { error } = await supabase
+          .from("profiles")
+          .insert({ id: userId, email });
+        
+        if (error && error.code !== "23505") { // Ignore duplicate key errors
+          console.error("Error creating profile:", error);
+        }
+      }
+    } catch (error) {
+      console.error("Error ensuring profile:", error);
     }
   },
 

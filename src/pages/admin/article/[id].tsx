@@ -149,11 +149,11 @@ export default function ArticleEditPage() {
         });
       }
       router.push("/admin");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving article:", error);
       toast({
         title: "Chyba",
-        description: "Nepodařilo se uložit článek",
+        description: error.message || "Nepodařilo se uložit článek",
         variant: "destructive"
       });
     } finally {

@@ -65,17 +65,25 @@ export const articlesService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("Uživatel není přihlášen");
 
+    console.log("Creating article with user:", user.id);
+    console.log("Article data:", article);
+
     const { data, error } = await supabase
       .from("articles")
       .insert({ ...article, author_id: user.id } as ArticleInsert)
       .select()
       .single();
     
-    if (error) throw error;
+    if (error) {
+      console.error("Article creation error:", error);
+      throw new Error(`Chyba při ukládání článku: ${error.message} (${error.code})`);
+    }
     return data;
   },
 
   async updateArticle(id: string, updates: ArticleUpdate): Promise<Article> {
+    console.log("Updating article:", id, updates);
+    
     const { data, error } = await supabase
       .from("articles")
       .update(updates)
@@ -83,7 +91,10 @@ export const articlesService = {
       .select()
       .single();
     
-    if (error) throw error;
+    if (error) {
+      console.error("Article update error:", error);
+      throw new Error(`Chyba při aktualizaci článku: ${error.message} (${error.code})`);
+    }
     return data;
   },
 
